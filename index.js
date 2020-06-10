@@ -44,7 +44,8 @@ class Message {
 }
 
 class Trollbox {
-  constructor(user, server, emulateBrowser) {
+  constructor(user, emulateBrowser, server) {
+    if (typeof server !== "string" && emulateBrowser !== true) console.warn("Connecting to W93 Trollbox will not work unless you enable emulateBrowser. Use at your own risk!");
     this.server = typeof server === "string" ? server : "http://www.windows93.net:8081";
     this.user = user instanceof User ? user : (typeof user === "string" ? new User(user) : new User());
     let url = new URL(this.server);
