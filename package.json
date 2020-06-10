@@ -2,6 +2,7 @@
   "name": "tb93",
   "version": "1.0.0",
   "description": "A minimal library for creating Trollbox bots on Windows93",
+  "keywords": ["windows93", "w93", "trollbox", "windows-93"],
   "main": "index.js",
   "author": "AlexApps99",
   "license": "ISC",
