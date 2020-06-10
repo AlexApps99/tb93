@@ -103,11 +103,11 @@ class Trollbox {
       }
     });
 
-    this.socket.on("user change nick", (prev, curr) => {
+    this.socket.on("user change nick", data => {
       try {
         this.on_user_change_nick(
-          new User(he.decode(prev.nick), he.decode(prev.color), he.decode(prev.style), curr.home),
-          new User(he.decode(curr.nick), he.decode(curr.color), he.decode(curr.style), curr.home)
+          new User(he.decode(data[0].nick), he.decode(data[0].color), he.decode(data[0].style), data[1].home),
+          new User(he.decode(data[1].nick), he.decode(data[1].color), he.decode(data[1].style), data[1].home)
         );
       } catch (err) {
         this.on_error(err);
