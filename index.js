@@ -2,6 +2,14 @@ const io = require("socket.io-client");
 const he = require("he");
 const inspect = Symbol.for('nodejs.util.inspect.custom');
 
+function decode(val) {
+  if (typeof val === "string") {
+    return he.decode(val);
+  } else {
+    return undefined;
+  }
+}
+
 class User {
   constructor(nick, color, style, home) {
     this.nick = typeof nick === "string" ? nick : "anonymous";
@@ -36,26 +44,30 @@ class Message {
 }
 
 class Trollbox {
-  constructor(user, server) {
+  constructor(user, server, emulateBrowser) {
     this.server = typeof server === "string" ? server : "http://www.windows93.net:8081";
     this.user = user instanceof User ? user : (typeof user === "string" ? new User(user) : new User());
     let url = new URL(this.server);
 
-    this.socket = io(this.server, {
-      forceNew: true,
-      transportOptions: {
-        polling: {
-          extraHeaders: {
-            "Accept-Encoding": "identity",
-            "Accept-Language": "*",
-            "Connection": "keep-alive",
-            "Cookie": "",
-            "Origin": url.protocol + "//" + url.hostname,
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
+    if (emulateBrowser == true) {
+      this.socket = io(this.server, {
+        forceNew: true,
+        transportOptions: {
+          polling: {
+            extraHeaders: {
+              "Accept-Encoding": "identity",
+              "Accept-Language": "*",
+              "Connection": "keep-alive",
+              "Cookie": "",
+              "Origin": url.protocol + "//" + url.hostname,
+              "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
+            }
           }
         }
-      }
-    });
+      });
+    } else {
+      this.socket = io(this.server, { forceNew: true });
+    }
     this.on_message = function(message) {};
     this.on_user_joined = function(user) {};
     this.on_user_left = function(user) {};
@@ -68,12 +80,12 @@ class Trollbox {
       try {
         this.on_message(
           new Message(
-            he.decode(data.msg),
+            decode(data.msg),
             data.date,
             new User(
-              he.decode(data.nick),
-              he.decode(data.color),
-              he.decode(data.style),
+              decode(data.nick),
+              decode(data.color),
+              decode(data.style),
               data.home
             )
           )
@@ -86,7 +98,7 @@ class Trollbox {
     this.socket.on("user joined", data => {
       try {
         this.on_user_joined(
-          new User(he.decode(data.nick), he.decode(data.color), he.decode(data.style), data.home)
+          new User(decode(data.nick), decode(data.color),  decode(data.style), data.home)
         );
       } catch (err) {
         this.on_error(err);
@@ -96,7 +108,7 @@ class Trollbox {
     this.socket.on("user left", data => {
       try {
         this.on_user_left(
-          new User(he.decode(data.nick), he.decode(data.color), he.decode(data.style), data.home)
+          new User(decode(data.nick), decode(data.color), decode(data.style), data.home)
         );
       } catch (err) {
         this.on_error(err);
@@ -106,8 +118,8 @@ class Trollbox {
     this.socket.on("user change nick", data => {
       try {
         this.on_user_change_nick(
-          new User(he.decode(data[0].nick), he.decode(data[0].color), he.decode(data[0].style), data[1].home),
-          new User(he.decode(data[1].nick), he.decode(data[1].color), he.decode(data[1].style), data[1].home)
+          new User(decode(data[0].nick), decode(data[0].color), decode(data[0].style), data[1].home),
+          new User(decode(data[1].nick), decode(data[1].color), decode(data[1].style), data[1].home)
         );
       } catch (err) {
         this.on_error(err);
@@ -117,7 +129,7 @@ class Trollbox {
     this.socket.on("update users", data => {
       try {
         this.on_update_users(
-          Object.entries(data).map(([k, v]) => new User(he.decode(v.nick), he.decode(v.color), he.decode(v.style), v.home))
+          Object.entries(data).map(([k, v]) => new User(decode(v.nick), decode(v.color), decode(v.style), v.home))
         );
       } catch (err) {
         this.on_error(err);
