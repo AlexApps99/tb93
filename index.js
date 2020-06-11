@@ -56,11 +56,16 @@ class Trollbox {
         transportOptions: {
           polling: {
             extraHeaders: {
+              "Accept": "*/*",
               "Accept-Encoding": "identity",
               "Accept-Language": "*",
+              "Cache-Control": "no-cache",
               "Connection": "keep-alive",
               "Cookie": "",
+              "Host": url.host,
               "Origin": url.protocol + "//" + url.hostname,
+              "Pragma": "no-cache",
+              "Referer": url.protocol + "//" + url.hostname + "/trollbox/",
               "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
             }
           }
