@@ -1,6 +1,6 @@
 {
   "name": "tb93",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A minimal library for creating Trollbox bots on Windows93",
   "keywords": ["windows93", "w93", "trollbox", "windows-93"],
   "main": "index.js",
@@ -9,6 +9,6 @@
   "repository": "github:AlexApps99/tb93",
   "dependencies": {
     "he": "^1.2.0",
-    "socket.io-client": "^2.2.0"
+    "socket.io-client": "^2.3.0"
   }
 }

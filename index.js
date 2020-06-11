@@ -1,6 +1,6 @@
 const io = require("socket.io-client");
 const he = require("he");
-const inspect = Symbol.for('nodejs.util.inspect.custom');
+const inspect = Symbol.for("nodejs.util.inspect.custom");
 
 function decode(val) {
   if (typeof val === "string") {
@@ -11,7 +11,11 @@ function decode(val) {
 }
 
 function atob(val) {
-  return Buffer.from(val, 'base64').toString('binary');
+  return Buffer.from(val, "base64").toString();
+}
+
+function btoa(val) {
+  return Buffer.from(val).toString("base64");
 }
 
 class User {
@@ -59,9 +63,9 @@ class Trollbox {
       // demonstrate that this is not supported and I
       // don't recommend making a bot for Trollbox
       // as they are usually spammy and annoying.
-      this.socket = eval(atob("aW8odGhpcy5zZXJ2ZXIse2ZvcmNlTmV3OiEwLHRyYW5zcG9ydE9wdGlvbnM6e3BvbGxpbmc6e2V4dHJhSGVhZGVyczp7QWNjZXB0OiIqLyoiLCJBY2NlcHQtRW5jb2RpbmciOiJpZGVudGl0eSIsIkFjY2VwdC1MYW5ndWFnZSI6IioiLCJDYWNoZS1Db250cm9sIjoibm8tY2FjaGUiLENvbm5lY3Rpb246ImtlZXAtYWxpdmUiLENvb2tpZToiIixIb3N0OnVybC5ob3N0LE9yaWdpbjp1cmwucHJvdG9jb2wrIi8vIit1cmwuaG9zdG5hbWUsUHJhZ21hOiJuby1jYWNoZSIsUmVmZXJlcjp1cmwucHJvdG9jb2wrIi8vIit1cmwuaG9zdG5hbWUrIi90cm9sbGJveC8iLCJVc2VyLUFnZW50IjoiTW96aWxsYS81LjAgKFgxMTsgTGludXggeDg2XzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvODMuMC40MTAzLjYxIFNhZmFyaS81MzcuMzYifX19fSk"));
+      this.socket = eval(atob("aW8odGhpcy5zZXJ2ZXIse2F1dG9Db25uZWN0OjAsZm9yY2VOZXc6ITAsdHJhbnNwb3J0T3B0aW9uczp7cG9sbGluZzp7ZXh0cmFIZWFkZXJzOntBY2NlcHQ6IiovKiIsIkFjY2VwdC1FbmNvZGluZyI6ImlkZW50aXR5IiwiQWNjZXB0LUxhbmd1YWdlIjoiKiIsIkNhY2hlLUNvbnRyb2wiOiJuby1jYWNoZSIsQ29ubmVjdGlvbjoia2VlcC1hbGl2ZSIsQ29va2llOiIiLEhvc3Q6dXJsLmhvc3QsT3JpZ2luOnVybC5wcm90b2NvbCsiLy8iK3VybC5ob3N0bmFtZSxQcmFnbWE6Im5vLWNhY2hlIixSZWZlcmVyOnVybC5wcm90b2NvbCsiLy8iK3VybC5ob3N0bmFtZSsiL3Ryb2xsYm94LyIsIlVzZXItQWdlbnQiOiJNb3ppbGxhLzUuMCAoWDExOyBMaW51eCB4ODZfNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS84My4wLjQxMDMuNjEgU2FmYXJpLzUzNy4zNiJ9fX19KQ"));
     } else {
-      this.socket = io(this.server, { forceNew: true });
+      this.socket = io(this.server, { autoConnect: false, forceNew: true });
     }
     this.on_message = function(message) {};
     this.on_user_joined = function(user) {};
@@ -143,7 +147,12 @@ class Trollbox {
   }
 
   connect() {
+    this.socket.open();
     this.socket.emit("user joined", this.user.nick, this.user.color, this.user.style, this.user.home);
+  }
+
+  disconnect() {
+    this.socket.close();
   }
 
   send(message) {
