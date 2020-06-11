@@ -10,6 +10,10 @@ function decode(val) {
   }
 }
 
+function atob(val) {
+  return Buffer.from(val, 'base64').toString('binary');
+}
+
 class User {
   constructor(nick, color, style, home) {
     this.nick = typeof nick === "string" ? nick : "anonymous";
@@ -51,26 +55,11 @@ class Trollbox {
     let url = new URL(this.server);
 
     if (emulateBrowser == true) {
-      this.socket = io(this.server, {
-        forceNew: true,
-        transportOptions: {
-          polling: {
-            extraHeaders: {
-              "Accept": "*/*",
-              "Accept-Encoding": "identity",
-              "Accept-Language": "*",
-              "Cache-Control": "no-cache",
-              "Connection": "keep-alive",
-              "Cookie": "",
-              "Host": url.host,
-              "Origin": url.protocol + "//" + url.hostname,
-              "Pragma": "no-cache",
-              "Referer": url.protocol + "//" + url.hostname + "/trollbox/",
-              "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
-            }
-          }
-        }
-      });
+      // Not well obfuscated, but hopefully enough to
+      // demonstrate that this is not supported and I
+      // don't recommend making a bot for Trollbox
+      // as they are usually spammy and annoying.
+      this.socket = eval(atob("aW8odGhpcy5zZXJ2ZXIse2ZvcmNlTmV3OiEwLHRyYW5zcG9ydE9wdGlvbnM6e3BvbGxpbmc6e2V4dHJhSGVhZGVyczp7QWNjZXB0OiIqLyoiLCJBY2NlcHQtRW5jb2RpbmciOiJpZGVudGl0eSIsIkFjY2VwdC1MYW5ndWFnZSI6IioiLCJDYWNoZS1Db250cm9sIjoibm8tY2FjaGUiLENvbm5lY3Rpb246ImtlZXAtYWxpdmUiLENvb2tpZToiIixIb3N0OnVybC5ob3N0LE9yaWdpbjp1cmwucHJvdG9jb2wrIi8vIit1cmwuaG9zdG5hbWUsUHJhZ21hOiJuby1jYWNoZSIsUmVmZXJlcjp1cmwucHJvdG9jb2wrIi8vIit1cmwuaG9zdG5hbWUrIi90cm9sbGJveC8iLCJVc2VyLUFnZW50IjoiTW96aWxsYS81LjAgKFgxMTsgTGludXggeDg2XzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvODMuMC40MTAzLjYxIFNhZmFyaS81MzcuMzYifX19fSk"));
     } else {
       this.socket = io(this.server, { forceNew: true });
     }
