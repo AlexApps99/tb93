@@ -9,7 +9,7 @@ bot.on_message = msg => {
   console.log(msg, msg.user);
   if (msg.user == "jankenpopp") {
     console.log(msg.user.home);
-    throw "Oh no, it's Jankenpopp!";
+    throw new Error("Oh no, it's Jankenpopp!");
   }
 };
 
